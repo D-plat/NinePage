@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>나인페이지 프라이빗 북살롱 | 수제 웰컴 드링크, 책 한 잔 하실래요?</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           1. CSS Variables & Reset
+           ========================================================================== */
+        :root {
+            /* Color Palette (조금 더 묵직한 톤으로 조정) */
+            --primary: #a37c5b;            
+            --primary-light: #bf9b7a;
+            --primary-dark: #6e5239;
+            --text-black: #1a1a1a;
+            --text-dark: #333333;
+            --text-normal: #555555;
+            --text-light: #888888;
+            --bg-body: #f4f3ef;            
+            --bg-white: #ffffff;
+            --bg-light: #ebeae5;
+            --border-color: #dfddd8;
+            --border-light: #ecebe7;
+            
+            /* Typography */
+            --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            --font-serif: 'Noto Serif KR', serif;
+            
+            /* Layout */
+            --max-width: 680px;            
+            --header-height: 60px;
+            --bottom-bar-height: 80px;
+            
+            /* Shadows & Transitions */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.4s ease;
+        }
+
+        /* Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-normal);
+            background-color: #e2e1dc; 
+            line-height: 1.65;
+            letter-spacing: -0.02em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        a { text-decoration: none; color: inherit; transition: var(--transition-fast); }
+        ul, ol, li { list-style: none; }
+        img, picture, video { max-width: 100%; height: auto; display: block; }
+        button, input, select, textarea { font-family: inherit; font-size: inherit; border: none; background: none; outline: none; }
+        button { cursor: pointer; }
+        
+        /* ==========================================================================
+           2. Base Layout & Utilities
+           ========================================================================== */
+        .app-wrapper {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: var(--bottom-bar-height);
+            box-shadow: 0 0 40px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-padding { padding: 80px 24px; }
+        .section-divider { width: 100%; height: 12px; background-color: var(--bg-light); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .text-center { text-align: center; }
+        .text-serif { font-family: var(--font-serif); }
+        .mt-1 { margin-top: 8px; } .mt-2 { margin-top: 16px; } .mt-3 { margin-top: 24px; } .mt-4 { margin-top: 32px; } .mt-5 { margin-top: 48px; }
+        
+        /* Fade-in Animation Classes */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================================================================
+           3. Hero Section (프립 스타일의 무드 있는 조명과 음료 이미지)
+           ========================================================================== */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 75vh;
+            min-height: 500px;
+            display: flex;
+            align-items: flex-end;
+            /* 분위기 있는 바/살롱 감성의 고해상도 이미지 */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+        }
+        .badge-event {
+            position: absolute;
+            top: 24px; left: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary-dark);
+            font-size: 13px; font-weight: 700;
+            padding: 8px 16px; border-radius: 30px;
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0;
+        }
+        .hero-content {
+            padding: 40px 24px;
+            color: var(--bg-white);
+            width: 100%;
+        }
+        .hero-subtitle { font-size: 15px; font-weight: 400; opacity: 0.9; margin-bottom: 12px; letter-spacing: 0.05em; display: block; }
+        .hero-title { font-family: var(--font-serif); font-size: 36px; font-weight: 600; line-height: 1.3; margin-bottom: 16px; word-break: keep-all; }
+        .hero-desc { font-size: 16px; font-weight: 300; line-height: 1.6; opacity: 0.8; word-break: keep-all; }
+
+        /* ==========================================================================
+           4. Product Header & Info Grid
+           ========================================================================== */
+        .product-summary { padding: 32px 24px; background: var(--bg-white); }
+        .ps-category { color: var(--primary); font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+        .ps-title { font-size: 24px; font-weight: 700; color: var(--text-black); line-height: 1.4; margin-bottom: 16px; word-break: keep-all; }
+        
+        .ps-rating { display: flex; align-items: center; margin-bottom: 24px; }
+        .ps-rating svg { width: 18px; height: 18px; fill: #f5a623; margin-right: 4px; }
+        .ps-rating .score { font-size: 16px; font-weight: 700; color: var(--text-black); margin-right: 6px; }
+        .ps-rating .reviews { font-size: 14px; color: var(--text-light); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            background: var(--bg-body); padding: 24px; border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .info-item { display: flex; align-items: flex-start; }
+        .info-item svg { width: 20px; height: 20px; fill: var(--primary); margin-right: 10px; margin-top: 2px; flex-shrink: 0; }
+        .info-item div { font-size: 14px; color: var(--text-dark); line-height: 1.5; word-break: keep-all; }
+        .info-item span { display: block; font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+        /* ==========================================================================
+           5. Sticky Navigation
+           ========================================================================== */
+        .sticky-nav {
+            position: sticky; top: 0;
+            background: rgba(244, 243, 239, 0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            display: flex; padding: 0 8px;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .sticky-nav::-webkit-scrollbar { display: none; }
+        .sticky-nav button {
+            flex: 0 0 auto; padding: 16px 14px; font-size: 15px; font-weight: 600;
+            color: var(--text-light); position: relative; transition: color var(--transition-fast);
+        }
+        .sticky-nav button:hover { color: var(--text-dark); }
+        .sticky-nav button.active { color: var(--text-black); }
+        .sticky-nav button.active::after {
+            content: ''; position: absolute; bottom: -1px; left: 14px; right: 14px;
+            height: 3px; background-color: var(--text-black); border-radius: 3px 3px 0 0;
+        }
+
+        /* ==========================================================================
+           6. Section Headers
+           ========================================================================== */
+        .section-header { margin-bottom: 40px; }
+        .sh-eng { font-family: var(--font-serif); font-size: 14px; font-style: italic; color: var(--primary); margin-bottom: 8px; display: block; letter-spacing: 0.05em; }
+        .sh-title { font-family: var(--font-serif); font-size: 28px; font-weight: 600; color: var(--text-black); line-height: 1.4; word-break: keep-all; }
+        .sh-desc { font-size: 15px; color: var(--text-normal); margin-top: 16px; line-height: 1.6; word-break: keep-all; }
+
+        /* ==========================================================================
+           7. Host & Interview Section
+           ========================================================================== */
+        .host-card {
+            background: var(--bg-white); padding: 32px 24px; border-radius: 16px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);
+        }
+        .host-profile { display: flex; align-items: center; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px dashed var(--border-color); }
+        .host-avatar {
+            width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--bg-body);
+            /* 호스트: 정성스럽게 음료를 준비하는 무드 */
+            background: url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=200&auto=format&fit=crop') center/cover;
+            flex-shrink: 0; box-shadow: var(--shadow-sm);
+        }
+        .host-info { margin-left: 20px; }
+        .host-role { font-size: 13px; color: var(--primary); font-weight: 600; margin-bottom: 4px; }
+        .host-name { font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: var(--text-black); }
+        
+        .interview-qa { margin-bottom: 24px; }
+        .interview-qa:last-child { margin-bottom: 0; }
+        .iq-q { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 10px; display: flex; align-items: flex-start; line-height: 1.5; }
+        .iq-q::before { content: 'Q.'; color: var(--primary); font-weight: 900; margin-right: 8px; font-size: 16px; }
+        .iq-a { font-size: 15px; color: var(--text-normal); line-height: 1.7; padding-left: 24px; word-break: keep-all; }
+
+        /* ==========================================================================
+           8. Space & Vibe Section (프립 느낌의 딥한 무드 이미지 적용)
+           ========================================================================== */
+        .vibe-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 32px; }
+        .vibe-img { width: 100%; height: 200px; border-radius: 12px; object-fit: cover; }
+        .vibe-caption {
+            font-size: 14px; color: var(--text-light); text-align: center; margin-top: 16px; font-style: italic; grid-column: span 2;
+        }
+
+        /* ==========================================================================
+           9. Points (Features) Section
+           ========================================================================== */
+        .point-item { margin-bottom: 72px; }
+        .point-item:last-child { margin-bottom: 0; }
+        .pt-num { font-family: var(--font-serif); font-size: 40px; font-style: italic; color: var(--border-color); line-height: 1; font-weight: 300; margin-bottom: 16px; display: block; }
+        .pt-title { font-family: var(--font-serif); font-size: 24px; font-weight: 600; color: var(--text-black); line-height: 1.4; margin-bottom: 20px; word-break: keep-all; }
+        .pt-image { width: 100%; height: 360px; object-fit: cover; border-radius: 16px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+        .pt-desc { font-size: 15.5px; color: var(--text-normal); line-height: 1.7; word-break: keep-all; }
+        
+        .drink-menu-box {
+            background: var(--bg-white); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); margin-top: 24px;
+        }
+        .drink-menu-title { font-size: 14px; font-weight: 700; color: var(--primary-dark); margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; }
+        .drink-list li { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-dark); }
+        .drink-list li span { color: var(--text-light); font-size: 13px; }
+
+        /* ==========================================================================
+           10. Target Audience Section
+           ========================================================================== */
+        .target-box { background: var(--bg-white); padding: 40px 24px; border-radius: 16px; box-shadow: var(--shadow-sm); }
+        .target-list { margin-top: 24px; }
+        .target-list li {
+            position: relative; padding-left: 32px; font-size: 15.5px; margin-bottom: 16px; color: var(--text-dark); line-height: 1.6; word-break: keep-all;
+        }
+        .target-list li::before {
+            content: '✓'; position: absolute; left: 0; top: 2px;
+            width: 20px; height: 20px; background: var(--primary); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;
+        }
+
+        /* ==========================================================================
+           11. Curriculum (Timeline) Section
+           ========================================================================== */
+        .timeline { position: relative; margin-top: 40px; }
+        .timeline::before { content: ''; position: absolute; left: 19px; top: 10px; bottom: 20px; width: 2px; background: var(--border-color); }
+        .tl-item { position: relative; padding-left: 56px; margin-bottom: 40px; }
+        .tl-item:last-child { margin-bottom: 0; }
+        .tl-icon {
+            position: absolute; left: 0; top: 0; width: 40px; height: 40px; background: var(--bg-white); border: 2px solid var(--primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); font-size: 14px;
+            z-index: 2;
+        }
+        .tl-time { font-size: 13px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
+        .tl-title { font-size: 18px; font-weight: 700; color: var(--text-black); margin-bottom: 12px; }
+        .tl-desc { font-size: 15px; color: var(--text-normal); line-height: 1.6; word-break: keep-all; }
+        .tl-box { background: var(--bg-white); padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 14px; color: var(--text-dark); border: 1px solid var(--border-light); }
+
+        /* ==========================================================================
+           12. Reviews Section
+           ========================================================================== */
+        .review-stats { text-align: center; margin-bottom: 40px; }
+        .rs-score { font-family: var(--font-serif); font-size: 48px; font-weight: 700; color: var(--text-black); line-height: 1; margin-bottom: 8px; }
+        .rs-stars { color: #f5a623; font-size: 20px; letter-spacing: 2px; margin-bottom: 8px; }
+        .rs-desc { font-size: 14px; color: var(--text-light); }
+        
+        .review-card { background: var(--bg-white); padding: 24px; border-radius: 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); }
+        .rc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .rc-profile { display: flex; align-items: center; }
+        .rc-avatar {
+            width: 40px; height: 40px; background: var(--primary-light); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px; margin-right: 12px;
+        }
+        .rc-info .name { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+        .rc-info .date { font-size: 12px; color: var(--text-light); }
+        .rc-rating { color: #f5a623; font-size: 13px; }
+        .rc-text { font-size: 15px; color: var(--text-normal); line-height: 1.6; word-break: keep-all; }
+
+        /* ==========================================================================
+           13. FAQ Section
+           ========================================================================== */
+        .faq-container { border-top: 2px solid var(--text-black); margin-top: 24px; }
+        .faq-item { border-bottom: 1px solid var(--border-color); }
+        .faq-q {
+            width: 100%; text-align: left; padding: 24px 16px; font-size: 16px; font-weight: 600; color: var(--text-black);
+            display: flex; justify-content: space-between; align-items: center; transition: background var(--transition-fast);
+        }
+        .faq-q:hover { background-color: rgba(0,0,0,0.02); }
+        .faq-q .icon {
+            font-size: 24px; font-weight: 300; color: var(--primary); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .faq-item.active .faq-q .icon { transform: rotate(45deg); }
+        .faq-a {
+            padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .faq-item.active .faq-a { max-height: 300px; }
+        .faq-a-inner {
+            padding: 0 0 24px 0; font-size: 15px; color: var(--text-normal); line-height: 1.6; word-break: keep-all;
+        }
+
+        /* ==========================================================================
+           14. Application Form
+           ========================================================================== */
+        .form-section { background-color: var(--bg-white); border-top: 1px solid var(--border-color); }
+        .form-wrapper { background: var(--bg-body); padding: 40px 24px; border-radius: 16px; border: 1px solid var(--border-light); }
+        .form-header { text-align: center; margin-bottom: 32px; }
+        .form-header h3 { font-family: var(--font-serif); font-size: 24px; color: var(--primary-dark); margin-bottom: 8px; }
+        .form-header p { font-size: 14px; color: var(--text-light); }
+        
+        .input-group { margin-bottom: 24px; }
+        .input-group label { display: block; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+        .input-group .hint { font-size: 12px; color: var(--text-light); margin-bottom: 8px; display: inline-block; margin-left: 8px; font-weight: 400; }
+        
+        .input-field {
+            width: 100%; padding: 16px; font-size: 16px; border: 1px solid var(--border-color); border-radius: 12px;
+            background-color: var(--bg-white); color: var(--text-black); transition: all 0.3s;
+        }
+        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(163, 124, 91, 0.1); }
+        .input-field::placeholder { color: #bbb; }
+        
+        select.input-field { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; }
+        
+        .btn-submit {
+            width: 100%; background-color: var(--text-black); color: var(--bg-white); font-size: 18px; font-weight: 700;
+            padding: 20px; border-radius: 12px; margin-top: 16px; transition: background var(--transition-fast);
+        }
+        .btn-submit:hover { background-color: #000; }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { background-color: #ccc; cursor: not-allowed; } /* 로딩 상태 추가 */
+
+        /* ==========================================================================
+           15. Bottom Fixed CTA Bar
+           ========================================================================== */
+        .bottom-cta {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: var(--max-width);
+            height: var(--bottom-bar-height); background: var(--bg-white); border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 999;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+        }
+        .price-wrap { display: flex; flex-direction: column; }
+        .price-original { font-size: 13px; color: var(--text-light); text-decoration: line-through; margin-bottom: 2px; }
+        .price-final { font-size: 22px; font-weight: 700; color: var(--primary-dark); display: flex; align-items: center; line-height: 1; }
+        .price-tag { font-size: 13px; font-weight: 500; color: var(--bg-white); background: var(--text-black); padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+        
+        .btn-cta {
+            background: var(--text-black); color: var(--bg-white); font-size: 16px; font-weight: 700;
+            padding: 14px 40px; border-radius: 30px; transition: background var(--transition-fast);
+        }
+        .btn-cta:hover { background: var(--primary-dark); }
+        
+        /* Toast Message */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: rgba(0,0,0,0.8); color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 100px; font-size: 15px;
+            transform: translateX(-50%); opacity: 0; transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 120px; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+    <header class="hero">
+        <div class="badge-event">가오픈 한정 · 5000원 초대</div>
+        <div class="hero-content fade-in-up">
+            <span class="hero-subtitle">Premium Private Book Salon</span>
+            <h1 class="hero-title">예비 사장이랑<br>책 한 잔 하실래요?</h1>
+            <p class="hero-desc">소란스러운 일상에서 한 걸음 물러나,<br>정갈한 공간에서 나만의 문장을 발견하는 시간.</p>
+        </div>
+    </header>
+
+    <div class="product-summary">
+        <div class="ps-category">액티비티 · 소셜/독서모임</div>
+        <h2 class="ps-title">[나인페이지] 책 한 잔 하실래요? : 웰컴드링크와 다정한 대화 🌙</h2>
+        
+        <div class="ps-rating">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            <span class="score">5.0</span>
+            <span class="reviews" onclick="scrollToSection('review')">사전 체험단 후기 보기</span>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                <div>장소 안내<span>(선정된 분들께 개별 안내)</span></div>
+            </div>
+            <div class="info-item">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z"/></svg>
+                <div>4월 18일 오후 5시<span>(일정 엄수 부탁드립니다)</span></div>
+            </div>
+            <div class="info-item">
+                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                <div>약 90분 소요<span>(충분한 대화 시간 보장)</span></div>
+            </div>
+            <div class="info-item">
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                <div>최대 16명<span>(소수 정예)</span></div>
+            </div>
+            <div class="info-item">
+                <svg viewBox="0 0 24 24"><path d="M21 4H3v2h18V4zm-2 15H5c-1.1 0-2-.9-2-2V7h18v10c0 1.1-.9 2-2 2zM7 10h10v2H7v-2z"/></svg>
+                <div>수제 웰컴 드링크<span>(논알콜/티/에이드 제공)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sticky-nav" id="topNav">
+        <button class="nav-btn active" data-target="host">호스트 소개</button>
+        <button class="nav-btn" data-target="point">살롱 포인트</button>
+        <button class="nav-btn" data-target="curriculum">진행 순서</button>
+        <button class="nav-btn" data-target="review">생생 후기</button>
+        <button class="nav-btn" data-target="faq">FAQ</button>
+    </nav>
+
+    <div class="section-divider"></div>
+    <section id="host" class="section-padding">
+        <div class="section-header fade-in-up">
+            <span class="sh-eng">Host Story</span>
+            <h2 class="sh-title">다정한 공간을 준비하는<br>예비 사장, 나인페이지입니다.</h2>
+        </div>
+
+        <div class="host-card fade-in-up">
+            <div class="host-profile">
+                <div class="host-avatar"></div>
+                <div class="host-info">
+                    <div class="host-role">북살롱 호스트 · 공간 기획자</div>
+                    <div class="host-name">Nine Page</div>
+                </div>
+            </div>
+            
+            <div class="host-interview">
+                <div class="interview-qa">
+                    <div class="iq-q">카페 정식 오픈 전에 독서 모임을 여시는 이유가 있나요?</div>
+                    <div class="iq-a">공간은 결국 '사람'이 채워야 완성된다고 믿습니다. 제가 심혈을 기울여 만든 이 아늑한 공간에서, 처음으로 울려 퍼지는 소리가 다정한 사람들의 책 이야기였으면 했어요. 그래서 정식 오픈 전, 소수의 분들만 조용히 초대해 제가 가장 좋아하는 책과 음료를 나누려 합니다.</div>
+                </div>
+                <div class="interview-qa">
+                    <div class="iq-q">독서 모임인데, 완독하지 않아도 된다고요?</div>
+                    <div class="iq-a">네, 맞습니다. 바쁜 현대 사회에서 책 한 권을 끝까지 읽는 건 생각보다 큰 에너지가 필요하죠. 저는 책의 줄거리를 달달 외우는 것보다, 책을 펼쳤을 때 내 시선을 사로잡은 '단 한 줄의 문장'이 훨씬 큰 위로가 된다고 생각해요. 부담 없이 오셔서 그 문장 하나만 툭 던져주시면 됩니다.</div>
+                </div>
+            </div>
+        </div>
+
+
+<div class="vibe-gallery fade-in-up">
+    <img src="https://images.unsplash.com/photo-1544640808-32ca72ac7f37?q=80&w=800&auto=format&fit=crop" alt="어둑한 북살롱 무드" class="vibe-img">
+    
+    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop" alt="아늑한 독서 공간" class="vibe-img">
+ 
+</div>
+
+ 
+
+    </section>
+
+    <div class="section-divider"></div>
+    <section id="point" class="section-padding">
+        <div class="section-header fade-in-up">
+            <span class="sh-eng">What We Do</span>
+            <h2 class="sh-title">오직 나에게 집중하는<br>90분의 다정한 쉼표</h2>
+            <p class="sh-desc">소모적인 네트워킹 대신, 정갈한 텍스트와 맛있는 음료로 채우는 밀도 높은 시간을 약속합니다.</p>
+        </div>
+
+        <div class="point-item fade-in-up">
+            <span class="pt-num">01</span>
+            <h3 class="pt-title">정성껏 끓이고 내린<br>수제 웰컴 드링크 테이스팅</h3>
+            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1000&auto=format&fit=crop" alt="수제 웰컴 드링크" class="pt-image">
+            <p class="pt-desc">독서 모임에 처음 오시나요? 낯선 공간의 문을 열고 들어오실 때의 그 긴장감을 누구보다 잘 압니다. 자리에 앉으시면 제가 계절에 맞춰 직접 청을 담그고 끓여 만든 '수제 웰컴 드링크'를 예쁜 잔에 내어드립니다. 정성스런 음료 한 모금이 어색함을 부드럽게 녹여줄 거예요.</p>
+            
+            <div class="drink-menu-box">
+                <div class="drink-menu-title">🌿 나인페이지 웰컴 드링크 라인업 (준비중)</div>
+                <ul class="drink-list">
+                    <li>로즈마리 자몽 블랙티 <span>(Signature)</span></li>
+                    <li>수제 바닐라빈 애플 에이드 <span>(Non-Caffeine)</span></li>
+                    <li>시나몬 진저 밀크티 <span>(Warm only)</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="point-item fade-in-up">
+            <span class="pt-num">02</span>
+            <h3 class="pt-title">강박 없는 딥 토크,<br>마음에 닿은 '한 문장'의 힘</h3>
+            <img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2026/0118/IE003572082_STD.jpg?q=80&w=1000&auto=format&fit=crop" alt="우아한 곡선의 계단이 있는 세련된 인테리어 구조물" class="pt-image">
+            <p class="pt-desc">이 공간에서는 누구도 지식을 평가하거나 논쟁하지 않습니다. 각자의 책에서 밑줄 친 단 한 줄의 문장. 그것이 왜 내 마음을 울렸는지, 나의 일상과 어떤 점이 맞닿아 있는지 이야기합니다. 호스트가 준비한 퀘스천 카드가 대화의 깊이를 더해줍니다.</p>
+        </div>
+
+        <div class="point-item fade-in-up">
+            <span class="pt-num">03</span>
+            <h3 class="pt-title">오늘의 영감을 소장하는<br>나만의 시그니처 책갈피</h3>
+            <img src="https://img.tumblbug.com/eyJidWNrZXQiOiJ0dW1ibGJ1Zy1pbWctcHJvZCIsImtleSI6ImNvdmVyLzBjM2MyZDYzLWE3YWYtNDIzNi1iN2QxLTM4NzFkZWFkNzU0YS8wMzliYjYyMi02N2M0LTRiOTYtYTllOS04ZDZhYzAxNTMzOGYucG5nIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxMDAwLCJoZWlnaHQiOjEwMDAsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZSwiZml0IjpudWxsfSwicm91bmRDcm9wIjpmYWxzZSwicm90YXRlIjpudWxsfX0=?q=80&w=1000&auto=format&fit=crop" alt="빈티지한 감성의 종이와 펜" class="pt-image">
+            <p class="pt-desc">공중으로 흩어지는 대화가 아쉽지 않도록, 세션 마지막에는 작은 미니 클래스를 진행합니다. 공간에 구비된 최고급 지류와 빈티지 스탬프, 실링 왁스를 활용해 오늘 나눈 문장을 적어 '나만의 감성 책갈피'를 만듭니다. 집으로 돌아가는 길에 이 책갈피가 작은 위로가 되길 바랍니다.</p>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+    <section id="curriculum" class="section-padding" style="background-color: var(--bg-light);">
+        <div class="section-header fade-in-up">
+            <span class="sh-eng">Curriculum</span>
+            <h2 class="sh-title">느슨하지만 밀도 있는<br>90분의 타임라인</h2>
+        </div>
+
+        <div class="timeline fade-in-up">
+            <div class="tl-item">
+                <div class="tl-icon">1</div>
+                <div class="tl-time">입장 ~ 15분</div>
+                <div class="tl-title">웰커밍 & 프로필 작성</div>
+                <div class="tl-desc">자리를 안내받고 웰컴 드링크 주문서를 작성합니다. 호스트의 짧은 소개(5분) 후, 나만의 프로필을 작성하는 동안 정성스런 음료와 간식이 서빙됩니다.</div>
+            </div>
+            
+            <div class="tl-item">
+                <div class="tl-icon">2</div>
+                <div class="tl-time">15분 ~ 55분 (40분)</div>
+                <div class="tl-title">책과 질문이 있는 딥 토크</div>
+                <div class="tl-desc">각자 가져온 책의 문장과 호스트가 준비한 질문 카드를 활용해 대화를 나눕니다. 강박 없이 편안하게 서로의 삶과 취향을 공유합니다.</div>
+                <div class="tl-box">✓ 이 시간에는 타인의 이야기에 온전히 귀 기울이는 '경청'의 룰이 적용됩니다.</div>
+            </div>
+            
+            <div class="tl-item">
+                <div class="tl-icon">3</div>
+                <div class="tl-time">55분 ~ 75분 (20분)</div>
+                <div class="tl-title">스페셜 미션 & 이벤트</div>
+                <div class="tl-desc">대화의 여운을 이어갈 소소한 미션과 이벤트가 진행됩니다. 참여하신 모든 분들께 5천원 상당의 커피 기프티콘을 선물로 드립니다.</div>
+            </div>
+            
+            <div class="tl-item">
+                <div class="tl-icon">4</div>
+                <div class="tl-time">75분 ~ 90분 (15분)</div>
+                <div class="tl-title">랩업 & 기록 남기기</div>
+                <div class="tl-desc">모임의 소감을 담아 피드백과 후기를 작성합니다. 공간에 기부하실 책이 있다면 전달해 주시고, 오늘의 분위기를 간직할 예쁜 단체 사진을 남기며 마무리합니다.</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+    <section id="review" class="section-padding">
+        <div class="section-header fade-in-up text-center">
+            <span class="sh-eng">Reviews</span>
+            <h2 class="sh-title">먼저 다녀간 분들의 이야기</h2>
+        </div>
+
+        <div class="review-stats fade-in-up">
+            <div class="rs-score">5.0</div>
+            <div class="rs-stars">★★★★★</div>
+            <div class="rs-desc">사전 체험단 참여자 만족도 100%</div>
+        </div>
+
+        <div class="review-list">
+            <div class="review-card fade-in-up">
+                <div class="rc-header">
+                    <div class="rc-profile">
+                        <div class="rc-avatar">K</div>
+                        <div class="rc-info">
+                            <div class="name">김*훈 님</div>
+                            <div class="date">2주 전 방문</div>
+                        </div>
+                    </div>
+                    <div class="rc-rating">★★★★★</div>
+                </div>
+                <div class="rc-text">독서 모임은 처음이라 낯을 많이 가리는데, 입장하자마자 내어주신 웰컴 드링크(대박이에요..) 덕분에 마음이 사르르 녹았습니다. 책을 다 읽지 않고 갔음에도 제 이야기를 경청해주시는 분위기가 너무 좋았어요. 조명 맛집이라 책갈피 사진도 엄청 잘 나옵니다!</div>
+            </div>
+
+            <div class="review-card fade-in-up">
+                <div class="rc-header">
+                    <div class="rc-profile">
+                        <div class="rc-avatar">L</div>
+                        <div class="rc-info">
+                            <div class="name">이*영 님</div>
+                            <div class="date">1달 전 방문</div>
+                        </div>
+                    </div>
+                    <div class="rc-rating">★★★★★</div>
+                </div>
+                <div class="rc-text">소란스러운 술자리 대신 금요일 저녁을 의미 있게 보내고 싶어 신청했습니다. 퀘스천 카드 질문들이 너무 좋아서 처음 보는 분들과도 깊은 대화를 나눌 수 있었어요. 호스트님이 공간에 얼마나 진심인지 묻어나는 따뜻한 시간이었습니다.이후 독서 소모임도 함께 하고있어요 !</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+    <section id="faq" class="section-padding">
+        <div class="section-header fade-in-up">
+            <span class="sh-eng">FAQ</span>
+            <h2 class="sh-title">자주 묻는 질문</h2>
+        </div>
+
+        <div class="faq-container fade-in-up">
+            <div class="faq-item">
+                <button class="faq-q">책을 다 못 읽었는데 참여해도 될까요? <span class="icon">+</span></button>
+                <div class="faq-a">
+                    <div class="faq-a-inner">네, 완독을 전혀 요구하지 않습니다. 앞부분만 조금 읽으셨거나, 혹은 책장에서 가장 좋아하는 문장 하나만 발췌해서 오셔도 충분합니다. 부담감은 내려놓고 오세요.</div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q">혼자 신청해도 어색하지 않을까요? <span class="icon">+</span></button>
+                <div class="faq-a">
+                    <div class="faq-a-inner">걱정 마세요! 이전 참여 데이터에 따르면 80% 이상의 분들이 혼자서 용기 내어 찾아주셨습니다. 어색하지 않도록 호스트가 다정하게 말을 건네고 밸런스 있게 대화를 이끌어 드립니다.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="form" class="section-padding form-section">
+        <div class="form-wrapper fade-in-up">
+            <div class="form-header">
+                <h3>나인페이지 초대장 신청</h3>
+                <p>가오픈 한정 (5000원) · 선정자 개별 안내</p>
+            </div>
+            
+            <form id="applyForm" onsubmit="submitForm(event)">
+                <div class="input-group">
+                    <label for="userName">이름 <span class="hint">(실명 또는 닉네임)</span></label>
+                    <input type="text" id="userName" name="이름" class="input-field" placeholder="참여하실 이름을 입력해주세요" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="userAge">나이 <span class="hint">(연령대 파악용)</span></label>
+                    <input type="text" id="userAge" name="나이" class="input-field" placeholder="예: 20대 후반, 30대 초반" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="userPhone">연락처 <span class="hint">(안내 문자 발송용)</span></label>
+                    <input type="tel" id="userPhone" name="연락처" class="input-field" placeholder="010-0000-0000" pattern="[0-9\-]+" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="userMbti">MBTI <span class="hint">(성향 파악용)</span></label>
+                    <input type="text" id="userMbti" name="MBTI" class="input-field" placeholder="ISTP" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="userStatus">참여 유무 <span class="hint">(의향)</span></label>
+                    <select id="userStatus" name="참여의향" class="input-field" required>
+                        <option value="" disabled selected>참여 의향을 선택해주세요</option>
+                        <option value="확실">네, 일정 맞춰 꼭 참석하겠습니다!</option>
+                        <option value="조율">관심 있습니다 (정확한 일정 안내 희망)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">초대장 신청 완료하기</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer" style="padding: 48px 24px 60px; background-color: var(--bg-body); color: var(--text-light); font-size: 13px; line-height: 1.6; text-align: center;">
+        <div class="footer-logo" style="font-family: var(--font-serif); font-size: 18px; font-weight: 600; color: var(--text-normal); margin-bottom: 16px;">Nine Page.</div>
+        <p>상호명 : 나인페이지 (Nine Page) | 대표 : 임지윤<br>
+        이메일 : contact@ninepage.com</p>
+        <p class="mt-2" style="opacity: 0.6;">© 2024 Nine Page. All rights reserved.</p>
+    </footer>
+
+    <div class="bottom-cta">
+        <div class="price-wrap">
+            <span class="price-original">정상가 35,000원</span>
+            <div class="price-final">5,000원 <span class="price-tag">초대 무료</span></div>
+        </div>
+        <button class="btn-cta" onclick="scrollToSection('form')">참여하기</button>
+    </div>
+
+    <div id="toast">신청이 완료되었습니다. 호스트가 확인 후 연락드릴게요! 🌙</div>
+
+</div>
+
+<script>
+    // 전달해주신 구글 앱스 스크립트 웹앱 URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyLECyAvcK4UfiSnY_Wpba1tW_exoWRtmSajEYfw60EQf7v52rTE7eztq1Eh4daeYwS/exec';
+
+    // 1. FAQ Accordion Logic
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-q');
+        question.addEventListener('click', () => {
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            item.classList.toggle('active');
+        });
+    });
+
+    // 2. Smooth Scroll
+    function scrollToSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            const navHeight = document.getElementById('topNav').offsetHeight;
+            const targetPosition = section.getBoundingClientRect().top + window.pageYOffset - navHeight;
+            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        }
+    }
+
+    // 3. Navigation Click Handlers
+    const navButtons = document.querySelectorAll('.nav-btn');
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            scrollToSection(targetId);
+        });
+    });
+
+    // 4. Scroll Spy
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const sections = ['host', 'point', 'curriculum', 'review', 'faq'];
+        const navHeight = document.getElementById('topNav').offsetHeight;
+
+        sections.forEach(id => {
+            const section = document.getElementById(id);
+            if (section) {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - navHeight - 100) {
+                    current = id;
+                }
+            }
+        });
+
+        navButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-target') === current) {
+                btn.classList.add('active');
+                const navContainer = document.getElementById('topNav');
+                const scrollLeft = btn.offsetLeft - (navContainer.offsetWidth / 2) + (btn.offsetWidth / 2);
+                navContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            }
+        });
+    });
+
+    // 5. Intersection Observer for Fade-in
+    document.addEventListener("DOMContentLoaded", function() {
+        const fadeElements = document.querySelectorAll('.fade-in-up');
+        const observerOptions = { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        fadeElements.forEach(element => { observer.observe(element); });
+    });
+
+    // 6. Form Submission (Google Sheets 연동 Fetch API)
+    function submitForm(event) {
+        event.preventDefault(); 
+        
+        const form = document.getElementById('applyForm');
+        const submitBtn = form.querySelector('.btn-submit');
+        const originalBtnText = submitBtn.innerText;
+        
+        // 제출 중일 때 버튼 텍스트 변경 및 클릭 방지 처리
+        submitBtn.innerText = '초대장 신청 처리 중...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                form.reset();
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert('신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+            })
+            .finally(() => {
+                // 처리가 끝나면 버튼 원상태로 복구
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            });
+    }
+</script>
+
+</body>
+</html>

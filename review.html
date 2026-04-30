@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Nine | 깊은 여운의 기록</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+KR:wght@200;400;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #0a0a0a;
+            color: #d4d4d4;
+            font-family: 'Noto Serif KR', serif;
+            overflow: hidden; /* 감성을 위해 스크롤 억제 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* 배경 레이어: 깊이감 있는 질감 */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            filter: grayscale(40%) contrast(110%);
+            animation: slowZoom 20s infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            padding: 60px 40px;
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            color: #999;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 200;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .input-wrap {
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        input, textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 0;
+            color: #fff;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.4s;
+        }
+
+        textarea {
+            height: 120px;
+            resize: none;
+            line-height: 1.8;
+        }
+
+        input:focus, textarea:focus {
+            border-bottom: 1px solid #fff;
+        }
+
+        label {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            font-size: 0.65rem;
+            color: #777;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        button {
+            width: 100%;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 18px;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.5s;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* 장식 요소 */
+        .quote {
+            position: absolute;
+            bottom: -80px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            font-style: italic;
+            opacity: 0.4;
+            font-weight: 200;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <div class="container">
+        <div class="logo">CHAPTER NINE</div>
+        <h1>오늘,<br> 당신의 이야기를<br>들려주세요</h1>
+
+        <form>
+            <div class="input-wrap">
+                <label>Name</label>
+                <input type="text" placeholder="성함을 남겨주세요">
+            </div>
+
+            <div class="input-wrap">
+                <label>Review</label>
+                <textarea placeholder="마음속에 남은 한 문장을 기록합니다"></textarea>
+            </div>
+
+            <button type="button" onclick="complete()">기록의 완성</button>
+        </form>
+
+        <div class="quote">"우리는 책을 읽음으로써 타인의 삶을 산다."</div>
+    </div>
+
+    <script>
+        function complete() {
+            const btn = document.querySelector('button');
+            btn.innerText = "저장되었습니다.";
+            btn.style.background = "transparent";
+            btn.style.color = "#fff";
+            btn.style.border = "1px solid rgba(255,255,255,0.1)";
+        }
+    </script>
+</body>
+</html>

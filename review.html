@@ -171,13 +171,38 @@
     </div>
 
     <script>
-        function complete() {
-            const btn = document.querySelector('button');
-            btn.innerText = "저장되었습니다.";
+        async function complete() {
+        const name = document.querySelector('input').value;
+        const review = document.querySelector('textarea').value;
+        const btn = document.querySelector('button');
+
+        if(!name || !review) {
+            alert("문장을 모두 채워주세요.");
+            return;
+        }
+
+        btn.innerText = "기록을 전송 중...";
+        btn.disabled = true;
+
+        // 구글 웹 앱 URL을 여기에 넣으세요
+        const scriptURL = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
+
+        try {
+            await fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify({ "name": name, "review": review })
+            });
+
+            btn.innerText = "기록이 완성되었습니다.";
             btn.style.background = "transparent";
             btn.style.color = "#fff";
             btn.style.border = "1px solid rgba(255,255,255,0.1)";
+        } catch (error) {
+            console.error('Error!', error.message);
+            btn.innerText = "전송 실패 (다시 시도)";
+            btn.disabled = false;
         }
+    }
     </script>
 </body>
 </html>
